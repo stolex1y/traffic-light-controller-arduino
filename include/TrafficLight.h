@@ -6,8 +6,12 @@
 enum Color { RED = 0, YELLOW = 1, GREEN = 2 };
 
 void trafficLightUpdate();
+void trafficLightSetShortRed(uint32_t duration);
 void trafficLightSetDuration(Color color, uint32_t duration);
+Color trafficLightGetColor();
+uint8_t trafficLightIsFlashing();
 void trafficLightStart();
-void trafficLightInit(uint8_t red_pin, uint8_t yellow_pin, uint8_t green_pin);
+void trafficLightStop();
+void trafficLightInit(uint8_t redPin, uint8_t yellowPin, uint8_t greenPin);
 
 #endif //EMBEDDED_ARDUINO_TRAFFICLIGHT_H

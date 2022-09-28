@@ -5,8 +5,8 @@
 struct Led {
     LedState state;
     uint32_t startTime;
-    int32_t duration;
-    int32_t period;
+    uint32_t duration;
+    uint32_t period;
     uint8_t pin;
 };
 
@@ -41,6 +41,12 @@ void ledUpdateState(Led *led) {
     }
 }
 
+uint32_t ledGetLightningTime(Led *led) {
+    if (led->state != LED_TURN_ON)
+        return 0;
+    return millis() - led->startTime;
+}
+
 void ledSetState(Led *led, LedState state) {
     led->state = state;
     led->duration = 0;
@@ -68,7 +74,7 @@ LedState ledGetState(Led *led) {
     return led->state;
 }
 
-bool ledFinishedLightning(Led *led) {
+uint8_t ledFinishedLightning(Led *led) {
     return led->duration == 0 && led->period == 0;
 }
 

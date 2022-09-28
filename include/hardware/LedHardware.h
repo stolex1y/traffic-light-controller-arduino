@@ -12,7 +12,8 @@ LedState ledGetState(Led *led);
 void ledSetPeriod(Led *led, uint16_t period, uint16_t duration);
 Led* ledInit(LedState initState, uint8_t pin);
 void ledUpdateState(Led *led);
-bool ledFinishedLightning(Led *led);
+uint8_t ledFinishedLightning(Led *led);
+uint32_t ledGetLightningTime(Led *led);
 
 
 #endif //EMBEDDED_ARDUINO_LEDHARDWARE_H

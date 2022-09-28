@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <../.pio/libdeps/nanoatmega328/GyverBME280/src/GyverBME280.h>
 
 #include "TrafficLight.h"
 #include "hardware/ButtonHardware.h"
@@ -9,36 +8,35 @@
 #define GREEN_PIN 5
 #define BUTTON 2
 
-#define RED_DURATION_START 6000
-
 static void onButtonClick();
 
 static uint16_t durations[3] = {
-        [RED] = RED_DURATION_START,
+        [RED] = 6000,
         [YELLOW] = 1500,
         [GREEN] = 1500
 };
 
 void setup() {
-    Serial.begin(9600);
     trafficLightInit(RED_PIN, YELLOW_PIN, GREEN_PIN);
     trafficLightSetDuration(RED, durations[RED]);
     trafficLightSetDuration(GREEN, durations[GREEN]);
     trafficLightSetDuration(YELLOW, durations[YELLOW]);
     buttonInit(BUTTON);
     buttonSetOnClick(&onButtonClick);
+    buttonEnable();
     trafficLightStart();
 }
 
 void loop() {
-    trafficLightUpdate();
+    if (trafficLightGetColor() == GREEN && !trafficLightIsFlashing())
+        buttonDisable();
+    else
+        buttonEnable();
 
+    trafficLightUpdate();
+    buttonUpdateState();
 }
 
 static void onButtonClick() {
-    durations[RED] >>= 2;
-    if (durations[RED] < RED_DURATION_START >> 4) {
-        durations[RED] = RED_DURATION_START;
-    }
-    trafficLightSetDuration(RED, durations[RED]);
+    trafficLightSetShortRed(durations[RED] >> 2);
 }

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef void (*pcintHandler)(void);
+typedef void (*pcintHandler)();
 
 enum PIN_CHANGE { PIN_RISING, PIN_FALLING };
 
