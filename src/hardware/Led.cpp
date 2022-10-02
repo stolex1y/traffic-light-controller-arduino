@@ -1,4 +1,4 @@
-#include "hardware/LedHardware.h"
+#include "hardware/Led.h"
 
 #include <Arduino.h>
 
@@ -13,24 +13,24 @@ struct Led {
 static void ledHardwareSet(Led *led);
 static void ledToggleState(Led *led);
 
-struct Led* ledInit(LedState initState, uint8_t pin) {
+struct Led* ledInit(const LedState initState, const uint8_t pin) {
     pinMode(pin, OUTPUT);
-    Led *led = (Led *) malloc(sizeof(Led));
+    Led * const led = (Led *) malloc(sizeof(Led));
     *led = (Led) { .state = initState, .startTime = 0, .duration = 0, .period = 0, .pin = pin };
-    ledSetState(led, initState);
+    ledSetStateConstantly(led, initState);
     return led;
 }
 
-void ledUpdateState(Led *led) {
+void ledUpdateState(Led * const led) {
     if (led->duration == 0 && led->period == 0) {
         return;
     }
-    uint32_t time = millis();
-    uint16_t delta = time - led->startTime;
+    const uint32_t time = millis();
+    const uint16_t delta = time - led->startTime;
     if (led->period > 0 && delta >= led->period) {
         led->duration -= led->period;
         if (led->duration <= 0) {
-            ledSetState(led, LED_TURN_OFF);
+            ledSetStateConstantly(led, LED_TURN_OFF);
         } else {
             ledToggleState(led);
             led->startTime = millis();
@@ -41,20 +41,20 @@ void ledUpdateState(Led *led) {
     }
 }
 
-uint32_t ledGetLightningTime(Led *led) {
+uint32_t ledGetLightningTime(const Led * const led) {
     if (led->state != LED_TURN_ON)
         return 0;
     return millis() - led->startTime;
 }
 
-void ledSetState(Led *led, LedState state) {
+void ledSetStateConstantly(Led *led, LedState state) {
     led->state = state;
     led->duration = 0;
     led->period = 0;
     ledHardwareSet(led);
 }
 
-void ledSetPeriod(Led *led, uint16_t period, uint16_t duration) {
+void ledSetPeriod(Led * const led, const uint16_t period, const uint16_t duration) {
     led->state = LED_TURN_ON;
     led->period = period;
     led->duration = duration;
@@ -62,7 +62,7 @@ void ledSetPeriod(Led *led, uint16_t period, uint16_t duration) {
     ledHardwareSet(led);
 }
 
-void ledSetState(Led *led, LedState state, uint16_t duration) {
+void ledSetStateWithDuration(Led * const led, const LedState state, const uint16_t duration) {
     led->state = state;
     led->period = 0;
     led->duration = duration;
@@ -70,19 +70,19 @@ void ledSetState(Led *led, LedState state, uint16_t duration) {
     ledHardwareSet(led);
 }
 
-LedState ledGetState(Led *led) {
+LedState ledGetState(const Led * const led) {
     return led->state;
 }
 
-uint8_t ledFinishedLightning(Led *led) {
+uint8_t ledFinishedLightning(const Led * const led) {
     return led->duration == 0 && led->period == 0;
 }
 
-static void ledToggleState(Led *led) {
+static void ledToggleState(Led * const led) {
     led->state = led->state == LED_TURN_ON ? LED_TURN_OFF : LED_TURN_ON;
     ledHardwareSet(led);
 }
 
-static void ledHardwareSet(Led *led) {
+static void ledHardwareSet(Led * const led) {
     digitalWrite(led->pin, led->state == LED_TURN_ON ? HIGH : LOW);
 }

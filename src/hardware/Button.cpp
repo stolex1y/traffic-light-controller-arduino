@@ -1,26 +1,26 @@
-#include "hardware/ButtonHardware.h"
+#include "hardware/Button.h"
 
 #include <Arduino.h>
 
-static uint8_t enabled = false;
+static volatile uint8_t enabled = 0;
 static uint8_t pin;
-static buttonActionListener onClickHandler = NULL;
-static buttonActionListener onLongClickHandler = NULL;
+static ButtonActionListener onClickHandler = NULL;
+static ButtonActionListener onLongClickHandler = NULL;
 
 static uint8_t buttonIsPressed();
 
-void buttonInit(uint8_t p) {
+void buttonInit(const uint8_t p) {
     pin = p;
     pinMode(pin, INPUT_PULLUP);
     onClickHandler = NULL;
     onLongClickHandler = NULL;
 }
 
-void buttonSetOnClick(buttonActionListener actionListener) {
+void buttonSetOnClick(const ButtonActionListener actionListener) {
     onClickHandler = actionListener;
 }
 
-void buttonSetOnLongClick(buttonActionListener actionListener) {
+void buttonSetOnLongClick(const ButtonActionListener actionListener) {
     onLongClickHandler = actionListener;
 }
 

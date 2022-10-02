@@ -1,28 +1,28 @@
-#include "hardware/InterraptionHardware.h"
+#include "hardware/Interruption.h"
 
 #include <Arduino.h>
 #include <../.pio/libdeps/nanoatmega328/PinChangeInterrupt/src/PinChangeInterrupt.h>
 
-void pcintSetHandler(uint8_t pin, pcintHandler handler) {
+void pcintSetHandler(const uint8_t pin, const PcintHandler handler) {
     if (handler == NULL)
         return;
     pcintClearHandler(pin);
     attachPCINT(digitalPinToPCINT(pin), handler, CHANGE);
 }
 
-void pcintClearHandler(uint8_t pin) {
+void pcintClearHandler(const uint8_t pin) {
     detachPCINT(digitalPinToPCINT(pin));
 }
 
-void pcintDisableHandler(uint8_t pin) {
+void pcintDisableHandler(const uint8_t pin) {
     disablePCINT(digitalPinToPCINT(pin));
 }
 
-void pcintEnableHandler(uint8_t pin) {
+void pcintEnableHandler(const uint8_t pin) {
     enablePCINT(digitalPinToPCINT(pin));
 }
 
-enum PIN_CHANGE getPcintTrigger(uint8_t pin) {
+enum PIN_CHANGE getPcintTrigger(const uint8_t pin) {
     uint8_t trigger = getPinChangeInterruptTrigger(digitalPinToPCINT(pin));
     if (trigger == FALLING)
         return PIN_FALLING;
